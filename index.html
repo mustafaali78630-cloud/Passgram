@@ -2,68 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Passgram Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0084ff; --bg: #ffffff; --chat-bg: #f0f2f5; --text: #1a1a1a; --my-msg: #0084ff; --other-msg: #ffffff; }
+        :root { --primary: #0084ff; --bg: #ffffff; --chat-bg: #efe7dd; --text: #1a1a1a; --my-msg: #0084ff; --other-msg: #ffffff; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); height: 100vh; overflow: hidden; color: var(--text); }
+        
+        body { background: var(--bg); height: 100dvh; overflow: hidden; color: var(--text); position: fixed; width: 100%; }
+
         .hidden { display: none !important; }
 
-        /* Login UI */
-        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; }
+        /* --- LOGIN SCREEN --- */
+        #login-screen { height: 100dvh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; z-index: 1000; position: relative; }
         .login-card { background: white; padding: 35px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .login-card h1 { font-size: 35px; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
         input { width: 100%; padding: 15px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 15px; font-size: 16px; background: #f9f9f9; }
         input:focus { border-color: var(--primary); outline: none; background: #fff; }
-        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; }
 
-        /* App Layout (Single Page Logic) */
-        #app-interface { height: 100vh; width: 100vw; position: relative; display: flex; overflow: hidden; }
+        /* --- APP LAYOUT --- */
+        #app-interface { height: 100dvh; width: 100vw; position: relative; overflow: hidden; }
         
-        /* screen-page common */
-        .page { height: 100%; width: 100%; position: absolute; top: 0; left: 0; background: white; transition: transform 0.3s ease-in-out; z-index: 10; }
+        .page { height: 100dvh; width: 100vw; position: absolute; top: 0; left: 0; background: white; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; display: flex; flex-direction: column; }
         .page-active { transform: translateX(0); }
-        .page-hidden { transform: translateX(100%); }
+        .page-right { transform: translateX(100%); }
 
-        /* Header */
-        .header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: white; position: sticky; top: 0; }
-        .header h2 { font-weight: 700; color: var(--primary); }
-        .logout-btn { color: #ff4d4f; font-size: 13px; font-weight: 600; cursor: pointer; }
+        /* --- HEADERS --- */
+        .header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: white; min-height: 65px; }
+        .header h2 { font-weight: 800; color: var(--primary); font-size: 24px; }
+        .icon-btn { font-size: 22px; cursor: pointer; padding: 5px; }
 
-        /* User List */
-        #user-list { padding: 10px; overflow-y: auto; height: calc(100% - 70px); }
-        .user-card { display: flex; align-items: center; padding: 15px; border-radius: 18px; margin-bottom: 8px; cursor: pointer; }
+        /* --- USER LIST --- */
+        #user-list { flex: 1; overflow-y: auto; padding: 10px; padding-bottom: 80px; }
+        .user-card { display: flex; align-items: center; padding: 15px; border-radius: 20px; margin-bottom: 5px; cursor: pointer; }
         .user-card:active { background: #f0f7ff; }
-        .avatar { width: 50px; height: 50px; background: #e7f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); margin-right: 15px; font-size: 20px; }
-        .user-info h4 { font-size: 16px; font-weight: 600; }
-        .user-info p { font-size: 12px; color: #888; }
+        .avatar { width: 55px; height: 55px; background: #e7f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); margin-right: 15px; font-size: 20px; overflow: hidden; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .user-info h4 { font-size: 17px; font-weight: 700; color: #333; }
+        .user-info p { font-size: 13px; color: #888; margin-top: 2px; }
 
-        /* Chat Page Specific */
-        .chat-header { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; background: white; gap: 10px; }
-        .back-btn { font-size: 24px; cursor: pointer; padding: 5px; }
-        #messages-container { flex: 1; padding: 15px; overflow-y: auto; background: #efe7dd; display: flex; flex-direction: column; gap: 8px; height: calc(100% - 130px); }
+        /* --- CHAT PAGE --- */
+        .chat-header { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #f0f0f0; background: white; gap: 12px; min-height: 65px; }
+        #messages-container { flex: 1; padding: 15px; overflow-y: auto; background: var(--chat-bg); display: flex; flex-direction: column; gap: 6px; }
 
-        /* Message Bubbles & Actions */
-        .msg-wrapper { display: flex; flex-direction: column; max-width: 80%; position: relative; margin-bottom: 4px; }
+        /* --- BUBBLES --- */
+        .msg-wrapper { display: flex; flex-direction: column; max-width: 85%; position: relative; }
         .msg-mine { align-self: flex-end; }
         .msg-theirs { align-self: flex-start; }
-        
-        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 14.5px; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .mine .bubble { background: var(--my-msg); color: white; border-bottom-right-radius: 4px; }
-        .theirs .bubble { background: var(--other-msg); color: #333; border-bottom-left-radius: 4px; }
-        .deleted-text { font-style: italic; opacity: 0.7; font-size: 12px; }
+        .bubble { padding: 10px 15px; border-radius: 20px; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; word-wrap: break-word; }
+        .msg-mine .bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .msg-theirs .bubble { background: white; color: #333; border-bottom-left-radius: 4px; }
+        .del-indicator { font-size: 11px; font-style: italic; opacity: 0.7; margin-top: 2px; }
 
-        /* Delete Menu */
-        .msg-menu { position: absolute; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); padding: 5px; z-index: 100; display: none; min-width: 120px; }
-        .msg-menu button { display: block; width: 100%; padding: 10px; border: none; background: none; text-align: left; font-size: 13px; cursor: pointer; border-radius: 5px; }
-        .msg-menu button:hover { background: #f5f5f5; }
+        /* --- INPUT AREA (CHROME FIX) --- */
+        .input-area { padding: 10px 15px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+        #msg-input { flex: 1; border-radius: 25px; border: 1.5px solid #eee; padding: 12px 18px; font-size: 16px; background: #f9f9f9; }
+        .send-btn { background: var(--primary); color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; }
 
-        /* Input Bar */
-        .chat-input-area { padding: 10px 15px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
-        #msg-input { flex: 1; border-radius: 25px; margin: 0; padding: 12px 18px; border: 1px solid #eee; background: #f9f9f9; }
-        .send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        /* --- SETTINGS PAGE --- */
+        .settings-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
+        .settings-item:active { background: #f5f5f5; }
+        .settings-info { margin-left: 15px; }
+        .settings-info h4 { font-size: 16px; }
+        .settings-info p { font-size: 13px; color: #888; }
+
+        /* --- DELETE MENU --- */
+        .menu { position: absolute; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); padding: 8px; z-index: 1000; display: none; min-width: 160px; }
+        .menu button { display: block; width: 100%; padding: 12px; border: none; background: none; text-align: left; font-size: 14px; font-weight: 600; border-radius: 8px; }
+        .menu button:active { background: #f0f0f0; }
+
+        /* --- BOTTOM NAV --- */
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; display: flex; background: white; border-top: 1px solid #f0f0f0; padding-bottom: env(safe-area-inset-bottom); z-index: 50; }
+        .nav-item { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: #888; font-size: 12px; font-weight: 600; }
+        .nav-active { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -71,38 +83,69 @@
     <div id="login-screen" class="hidden">
         <div class="login-card">
             <h1>Passgram</h1>
-            <p>Connect with friends instantly</p>
             <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
-            <button class="btn" onclick="authAction()">Join Now</button>
+            <button class="btn" onclick="authAction()">Login / Join</button>
         </div>
     </div>
 
     <div id="app-interface" class="hidden">
-        <div id="list-page" class="page">
+        
+        <div id="list-page" class="page page-active">
             <div class="header">
                 <h2>Passgram</h2>
-                <span class="logout-btn" onclick="logout()">Logout</span>
+                <div class="icon-btn" onclick="goToPage('settings-page')">⚙️</div>
             </div>
             <div id="user-list"></div>
+            <div class="bottom-nav">
+                <div class="nav-item nav-active">💬<br>Chats</div>
+                <div class="nav-item" onclick="goToPage('settings-page')">👤<br>Profile</div>
+            </div>
         </div>
 
-        <div id="chat-page" class="page page-hidden">
+        <div id="chat-page" class="page page-right">
             <div class="chat-header">
-                <span class="back-btn" onclick="closeChat()">←</span>
-                <div class="avatar" style="width:35px; height:35px; font-size:14px;" id="chat-avatar">?</div>
-                <h4 id="chat-name">User</h4>
+                <span class="icon-btn" onclick="goBack()">←</span>
+                <div class="avatar" id="c-avatar" style="width:40px; height:40px; font-size:16px;">?</div>
+                <h4 id="c-name">User</h4>
             </div>
             <div id="messages-container"></div>
-            <div id="msg-menu" class="msg-menu">
+            <div id="msg-menu" class="menu">
                 <button onclick="deleteMsg('me')">Delete for me</button>
                 <button id="del-everyone-btn" onclick="deleteMsg('everyone')" style="color:red;">Delete for everyone</button>
             </div>
-            <form class="chat-input-area" onsubmit="sendMsg(event)">
+            <form class="input-area" onsubmit="sendMsg(event)">
                 <input type="text" id="msg-input" placeholder="Message..." autocomplete="off">
                 <button type="submit" class="send-btn">➤</button>
             </form>
         </div>
+
+        <div id="settings-page" class="page page-right">
+            <div class="header">
+                <span class="icon-btn" onclick="goBack()">←</span>
+                <h2>Settings</h2>
+            </div>
+            <div class="settings-item" style="padding: 30px 20px;">
+                <div class="avatar" id="my-avatar" style="width:70px; height:70px; font-size:25px;">U</div>
+                <div class="settings-info">
+                    <h4 id="my-name">User Name</h4>
+                    <p id="my-email">email@test.com</p>
+                </div>
+            </div>
+            <div class="settings-item" onclick="alert('Feature coming soon!')">
+                <div class="icon-btn">🔔</div>
+                <div class="settings-info"><h4>Notifications</h4><p>Sound, vibration & more</p></div>
+            </div>
+            <div class="settings-item" onclick="alert('Privacy is locked!')">
+                <div class="icon-btn">🔒</div>
+                <div class="settings-info"><h4>Privacy</h4><p>Blocked contacts, disappearing messages</p></div>
+            </div>
+            <div class="settings-item" onclick="logout()" style="color: red;">
+                <div class="icon-btn">🚪</div>
+                <div class="settings-info"><h4>Logout</h4><p>Sign out of this account</p></div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -110,6 +153,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // CONFIG (Same)
         const firebaseConfig = {
             apiKey: "AIzaSyCe7d3VLwfSygQD8Z0BK5430sarG6ZMC6M",
             authDomain: "passgram-49bf6.firebaseapp.com",
@@ -128,10 +172,11 @@
         let chatSub = null;
         let selectedMsgId = null;
 
-        // AUTH
+        // AUTH LOGIC
         window.authAction = () => {
             const e = document.getElementById('email').value;
             const p = document.getElementById('password').value;
+            if(!e || !p) return alert("Fill details!");
             signInWithEmailAndPassword(auth, e, p).catch(() => createUserWithEmailAndPassword(auth, e, p));
         };
         window.logout = () => signOut(auth);
@@ -142,12 +187,29 @@
                 await setDoc(doc(db, "users", user.email), { email: user.email }, { merge: true });
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-interface').classList.remove('hidden');
+                
+                // Set Profile
+                document.getElementById('my-name').innerText = user.email.split('@')[0];
+                document.getElementById('my-email').innerText = user.email;
+                document.getElementById('my-avatar').innerText = user.email[0].toUpperCase();
+                
                 loadUsers();
             } else {
                 document.getElementById('login-screen').classList.remove('hidden');
                 document.getElementById('app-interface').classList.add('hidden');
             }
         });
+
+        // NAVIGATION
+        window.goToPage = (pageId) => {
+            document.getElementById(pageId).classList.remove('page-right');
+        };
+        window.goBack = () => {
+            document.querySelectorAll('.page').forEach(p => {
+                if(p.id !== 'list-page') p.classList.add('page-right');
+            });
+            if(chatSub) chatSub();
+        };
 
         // USER LIST
         function loadUsers() {
@@ -170,9 +232,9 @@
         // CHAT ENGINE
         function openChat(email) {
             activeFriend = email;
-            document.getElementById('chat-name').innerText = email.split('@')[0];
-            document.getElementById('chat-avatar').innerText = email[0].toUpperCase();
-            document.getElementById('chat-page').classList.remove('page-hidden');
+            document.getElementById('c-name').innerText = email.split('@')[0];
+            document.getElementById('c-avatar').innerText = email[0].toUpperCase();
+            goToPage('chat-page');
             
             const roomId = [currentUser.email, email].sort().join('_');
             if(chatSub) chatSub();
@@ -183,28 +245,21 @@
                 container.innerHTML = '';
                 snap.forEach(mDoc => {
                     const m = mDoc.data();
-                    const isMine = m.sender === currentUser.email;
-                    
-                    // Delete for me check
                     if(m.deletedFor && m.deletedFor.includes(currentUser.email)) return;
 
                     const wrap = document.createElement('div');
-                    wrap.className = `msg-wrapper ${isMine ? 'mine msg-mine' : 'theirs msg-theirs'}`;
+                    wrap.className = `msg-wrapper ${m.sender === currentUser.email ? 'msg-mine' : 'msg-theirs'}`;
                     
                     if(m.isDeleted) {
-                        wrap.innerHTML = `<div class="bubble deleted-text">🚫 This message was deleted</div>`;
+                        wrap.innerHTML = `<div class="bubble" style="font-style:italic; opacity:0.6;">🚫 This message was deleted</div>`;
                     } else {
-                        wrap.innerHTML = `<div class="bubble" onclick="showMenu(event, '${mDoc.id}', ${isMine})">${m.text}</div>`;
+                        wrap.innerHTML = `<div class="bubble" onclick="showMenu(event, '${mDoc.id}', ${m.sender === currentUser.email})">${m.text}</div>`;
                     }
                     container.appendChild(wrap);
                 });
                 container.scrollTop = container.scrollHeight;
             });
         }
-
-        window.closeChat = () => {
-            document.getElementById('chat-page').classList.add('page-hidden');
-        };
 
         window.sendMsg = async (e) => {
             e.preventDefault();
@@ -221,13 +276,13 @@
             input.value = '';
         };
 
-        // DELETE LOGIC
+        // MESSAGE OPTIONS
         window.showMenu = (e, msgId, isMine) => {
             selectedMsgId = msgId;
             const menu = document.getElementById('msg-menu');
             menu.style.display = 'block';
-            menu.style.top = e.pageY + 'px';
-            menu.style.left = (isMine ? e.pageX - 100 : e.pageX) + 'px';
+            menu.style.top = (e.clientY - 20) + 'px';
+            menu.style.left = (isMine ? e.clientX - 140 : e.clientX) + 'px';
             document.getElementById('del-everyone-btn').style.display = isMine ? 'block' : 'none';
             e.stopPropagation();
         };
@@ -235,12 +290,11 @@
         window.deleteMsg = async (type) => {
             const roomId = [currentUser.email, activeFriend].sort().join('_');
             const msgRef = doc(db, "chats", roomId, "messages", selectedMsgId);
-            
             if(type === 'me') {
                 const snap = await getDoc(msgRef);
-                let currentDeletedFor = snap.data().deletedFor || [];
-                currentDeletedFor.push(currentUser.email);
-                await updateDoc(msgRef, { deletedFor: currentDeletedFor });
+                let dFor = snap.data().deletedFor || [];
+                dFor.push(currentUser.email);
+                await updateDoc(msgRef, { deletedFor: dFor });
             } else {
                 await updateDoc(msgRef, { isDeleted: true, text: "" });
             }
@@ -248,7 +302,6 @@
         };
 
         document.onclick = () => document.getElementById('msg-menu').style.display = 'none';
-
     </script>
 </body>
 </html>

@@ -2,161 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Passgram Ultra</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Passgram Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0084ff; --tick-blue: #34b7f1; --bg: #ffffff; --chat-bg: #efe7dd; --text: #1a1a1a; }
+        :root { --primary: #0084ff; --bg: #ffffff; --chat-bg: #f0f2f5; --text: #1a1a1a; --my-msg: #0084ff; --other-msg: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); height: 100dvh; overflow: hidden; position: fixed; width: 100%; }
+        body { background: var(--bg); height: 100vh; overflow: hidden; color: var(--text); }
         .hidden { display: none !important; }
 
-        /* Auth UI */
-        #auth-screen { height: 100dvh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; z-index: 1000; position: relative; }
-        .auth-card { background: white; padding: 30px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-        .auth-card h1 { font-size: 32px; color: var(--primary); font-weight: 800; margin-bottom: 20px; }
-        input { width: 100%; padding: 14px; margin: 8px 0; border: 1.5px solid #eee; border-radius: 12px; font-size: 16px; background: #f9f9f9; }
+        /* Login UI */
+        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; }
+        .login-card { background: white; padding: 35px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .login-card h1 { font-size: 35px; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 15px; font-size: 16px; background: #f9f9f9; }
         input:focus { border-color: var(--primary); outline: none; background: #fff; }
-        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        .auth-link { font-size: 13px; color: var(--primary); cursor: pointer; margin-top: 12px; display: inline-block; font-weight: 600; }
+        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        /* App Layout */
-        #app-interface { height: 100dvh; width: 100vw; position: relative; overflow: hidden; }
-        .page { height: 100dvh; width: 100vw; position: absolute; top: 0; left: 0; background: white; transition: transform 0.4s cubic-bezier(0.1, 0.7, 0.1, 1); z-index: 10; display: flex; flex-direction: column; }
+        /* App Layout (Single Page Logic) */
+        #app-interface { height: 100vh; width: 100vw; position: relative; display: flex; overflow: hidden; }
+        
+        /* screen-page common */
+        .page { height: 100%; width: 100%; position: absolute; top: 0; left: 0; background: white; transition: transform 0.3s ease-in-out; z-index: 10; }
         .page-active { transform: translateX(0); }
-        .page-right { transform: translateX(100%); }
+        .page-hidden { transform: translateX(100%); }
 
-        /* Headers */
-        .header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; min-height: 70px; background: #fff; }
-        .header h2 { font-weight: 800; color: var(--primary); font-size: 26px; }
-        .icon-btn { cursor: pointer; color: #555; }
+        /* Header */
+        .header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: white; position: sticky; top: 0; }
+        .header h2 { font-weight: 700; color: var(--primary); }
+        .logout-btn { color: #ff4d4f; font-size: 13px; font-weight: 600; cursor: pointer; }
 
         /* User List */
-        #user-list { flex: 1; overflow-y: auto; padding: 10px; padding-bottom: 90px; }
-        .user-card { display: flex; align-items: center; padding: 12px 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; }
-        .user-card:active { background: #f0f7ff; transform: scale(0.98); }
-        .avatar-box { position: relative; margin-right: 15px; }
-        .avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; background: #e7f3ff; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .online-status { width: 13px; height: 13px; background: #2ecc71; border: 2.5px solid white; border-radius: 50%; position: absolute; bottom: 2px; right: 2px; }
-        .offline-status { background: #cbd5e0; }
+        #user-list { padding: 10px; overflow-y: auto; height: calc(100% - 70px); }
+        .user-card { display: flex; align-items: center; padding: 15px; border-radius: 18px; margin-bottom: 8px; cursor: pointer; }
+        .user-card:active { background: #f0f7ff; }
+        .avatar { width: 50px; height: 50px; background: #e7f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); margin-right: 15px; font-size: 20px; }
+        .user-info h4 { font-size: 16px; font-weight: 600; }
+        .user-info p { font-size: 12px; color: #888; }
 
-        /* Chat UI */
-        #messages-container { flex: 1; padding: 15px; overflow-y: auto; background: var(--chat-bg); display: flex; flex-direction: column; gap: 6px; }
-        .bubble { padding: 9px 14px; border-radius: 18px; font-size: 15px; max-width: 80%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; line-height: 1.4; }
-        .msg-mine { align-self: flex-end; background: #dcf8c6; border-bottom-right-radius: 2px; }
-        .msg-theirs { align-self: flex-start; background: white; border-bottom-left-radius: 2px; }
-        .tick { font-size: 11px; margin-left: 6px; vertical-align: bottom; }
+        /* Chat Page Specific */
+        .chat-header { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; background: white; gap: 10px; }
+        .back-btn { font-size: 24px; cursor: pointer; padding: 5px; }
+        #messages-container { flex: 1; padding: 15px; overflow-y: auto; background: #efe7dd; display: flex; flex-direction: column; gap: 8px; height: calc(100% - 130px); }
 
-        /* Profile Section */
-        .profile-content { padding: 25px; text-align: center; flex: 1; overflow-y: auto; }
-        .profile-img-big { width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--primary); margin-bottom: 20px; object-fit: cover; cursor: pointer; }
-        .profile-field { text-align: left; margin-bottom: 18px; }
-        .profile-field label { font-size: 11px; color: var(--primary); font-weight: 700; margin-left: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .profile-field input { margin-top: 5px; border: 1px solid #eee; }
+        /* Message Bubbles & Actions */
+        .msg-wrapper { display: flex; flex-direction: column; max-width: 80%; position: relative; margin-bottom: 4px; }
+        .msg-mine { align-self: flex-end; }
+        .msg-theirs { align-self: flex-start; }
+        
+        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 14.5px; position: relative; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .mine .bubble { background: var(--my-msg); color: white; border-bottom-right-radius: 4px; }
+        .theirs .bubble { background: var(--other-msg); color: #333; border-bottom-left-radius: 4px; }
+        .deleted-text { font-style: italic; opacity: 0.7; font-size: 12px; }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; display: flex; background: white; border-top: 1px solid #f0f0f0; padding-bottom: env(safe-area-inset-bottom); z-index: 50; }
-        .nav-item { flex: 1; text-align: center; padding: 12px 0; cursor: pointer; color: #a0aec0; transition: 0.3s; }
-        .nav-item i { width: 22px; height: 22px; margin-bottom: 4px; }
-        .nav-item span { display: block; font-size: 11px; font-weight: 700; }
-        .nav-active { color: var(--primary); transform: translateY(-2px); }
+        /* Delete Menu */
+        .msg-menu { position: absolute; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); padding: 5px; z-index: 100; display: none; min-width: 120px; }
+        .msg-menu button { display: block; width: 100%; padding: 10px; border: none; background: none; text-align: left; font-size: 13px; cursor: pointer; border-radius: 5px; }
+        .msg-menu button:hover { background: #f5f5f5; }
 
         /* Input Bar */
-        .input-bar { padding: 10px 15px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
-        #msg-input { flex: 1; border-radius: 25px; border: 1.5px solid #eee; padding: 12px 18px; font-size: 16px; background: #f9f9f9; margin: 0; }
+        .chat-input-area { padding: 10px 15px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
+        #msg-input { flex: 1; border-radius: 25px; margin: 0; padding: 12px 18px; border: 1px solid #eee; background: #f9f9f9; }
+        .send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen">
-        <div class="auth-card">
-            <h1 id="auth-title">Passgram</h1>
-            <input type="text" id="reg-username" class="hidden" placeholder="Choose Unique @username">
-            <input type="email" id="auth-email" placeholder="Email Address">
-            <input type="password" id="auth-pass" placeholder="Password">
-            <button class="btn" onclick="handleAuth()" id="auth-btn">Login</button>
-            <p class="auth-link" onclick="toggleAuth()" id="auth-toggle">Don't have an account? Sign Up</p>
-            <p class="auth-link" onclick="resetPass()" style="display:block; opacity:0.7;">Forgot Password?</p>
+    <div id="login-screen" class="hidden">
+        <div class="login-card">
+            <h1>Passgram</h1>
+            <p>Connect with friends instantly</p>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn" onclick="authAction()">Join Now</button>
         </div>
     </div>
 
     <div id="app-interface" class="hidden">
-        
-        <div id="list-page" class="page page-active">
+        <div id="list-page" class="page">
             <div class="header">
                 <h2>Passgram</h2>
-                <i data-lucide="search" class="icon-btn"></i>
+                <span class="logout-btn" onclick="logout()">Logout</span>
             </div>
             <div id="user-list"></div>
-            <div class="bottom-nav">
-                <div class="nav-item nav-active"><i data-lucide="message-circle"></i><span>CHAT</span></div>
-                <div class="nav-item" onclick="alert('Status feature coming soon!')"><i data-lucide="aperture"></i><span>STATUS</span></div>
-                <div class="nav-item" onclick="alert('Groups feature coming soon!')"><i data-lucide="users"></i><span>GROUPS</span></div>
-                <div class="nav-item" onclick="goToPage('profile-page')"><i data-lucide="user-circle"></i><span>PROFILE</span></div>
-            </div>
         </div>
 
-        <div id="chat-page" class="page page-right">
-            <div class="header" style="justify-content: flex-start; gap: 12px;">
-                <i data-lucide="chevron-left" class="icon-btn" onclick="goBack()"></i>
-                <img src="" id="c-img" class="avatar" style="width:42px; height:42px;">
-                <div style="flex:1">
-                    <h4 id="c-name" style="font-size:17px; font-weight:700;">Name</h4>
-                    <span id="c-status" style="font-size:11px; font-weight:600; color:#2ecc71;">online</span>
-                </div>
+        <div id="chat-page" class="page page-hidden">
+            <div class="chat-header">
+                <span class="back-btn" onclick="closeChat()">←</span>
+                <div class="avatar" style="width:35px; height:35px; font-size:14px;" id="chat-avatar">?</div>
+                <h4 id="chat-name">User</h4>
             </div>
             <div id="messages-container"></div>
-            <form class="input-bar" onsubmit="sendMsg(event)">
-                <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off">
-                <button type="submit" style="background:var(--primary); border:none; color:white; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-                    <i data-lucide="send" style="width:20px; height:20px;"></i>
-                </button>
+            <div id="msg-menu" class="msg-menu">
+                <button onclick="deleteMsg('me')">Delete for me</button>
+                <button id="del-everyone-btn" onclick="deleteMsg('everyone')" style="color:red;">Delete for everyone</button>
+            </div>
+            <form class="chat-input-area" onsubmit="sendMsg(event)">
+                <input type="text" id="msg-input" placeholder="Message..." autocomplete="off">
+                <button type="submit" class="send-btn">➤</button>
             </form>
         </div>
-
-        <div id="profile-page" class="page page-right">
-            <div class="header">
-                <i data-lucide="chevron-left" class="icon-btn" onclick="goBack()"></i>
-                <h2 style="font-size:22px;">My Profile</h2>
-                <div></div>
-            </div>
-            <div class="profile-content">
-                <div style="position:relative; display:inline-block;">
-                    <img src="" id="p-img" class="profile-img-big" onclick="updatePhoto()">
-                    <div style="position:absolute; bottom:25px; right:5px; background:var(--primary); color:white; padding:6px; border-radius:50%; border:3px solid white;">
-                        <i data-lucide="camera" style="width:16px; height:16px;"></i>
-                    </div>
-                </div>
-                
-                <div class="profile-field">
-                    <label>Display Name</label>
-                    <input type="text" id="p-name" placeholder="How others see you">
-                </div>
-                <div class="profile-field">
-                    <label>Bio</label>
-                    <input type="text" id="p-bio" placeholder="Tell something about yourself">
-                </div>
-                <div class="profile-field">
-                    <label>Personal Notes</label>
-                    <input type="text" id="p-notes" placeholder="Private notes">
-                </div>
-                
-                <button class="btn" onclick="saveProfile()" style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <i data-lucide="save" style="width:18px;"></i> Save Profile
-                </button>
-                <button class="btn" style="background:#fff; color:#ff4d4f; border:1.5px solid #ff4d4f; margin-top:10px;" onclick="logout()">
-                    Logout Account
-                </button>
-            </div>
-        </div>
-
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, updateDoc, deleteDoc, getDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCe7d3VLwfSygQD8Z0BK5430sarG6ZMC6M",
@@ -171,181 +123,132 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUser = null, activeFriend = null, chatSub = null, isSignUp = false;
+        let currentUser = null;
+        let activeFriend = null;
+        let chatSub = null;
+        let selectedMsgId = null;
 
-        // AUTH SYSTEM
-        window.toggleAuth = () => {
-            isSignUp = !isSignUp;
-            document.getElementById('auth-title').innerText = isSignUp ? "Join Passgram" : "Passgram";
-            document.getElementById('reg-username').classList.toggle('hidden', !isSignUp);
-            document.getElementById('auth-btn').innerText = isSignUp ? "Create Account" : "Login";
-            document.getElementById('auth-toggle').innerText = isSignUp ? "Already have an account? Login" : "Don't have an account? Sign Up";
+        // AUTH
+        window.authAction = () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            signInWithEmailAndPassword(auth, e, p).catch(() => createUserWithEmailAndPassword(auth, e, p));
         };
+        window.logout = () => signOut(auth);
 
-        window.handleAuth = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            const userN = document.getElementById('reg-username').value;
-
-            if(isSignUp) {
-                if(!userN) return alert("Please pick a username!");
-                const q = query(collection(db, "users"), where("username", "==", userN.toLowerCase().trim()));
-                const snap = await getDocs(q);
-                if(!snap.empty) return alert("Username already taken!");
-
-                createUserWithEmailAndPassword(auth, email, pass).then(cred => {
-                    setDoc(doc(db, "users", cred.user.uid), {
-                        uid: cred.user.uid,
-                        username: userN.toLowerCase().trim(),
-                        displayName: userN,
-                        photo: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-                        status: "online", bio: "Available", notes: ""
-                    });
-                }).catch(e => alert(e.message));
-            } else {
-                signInWithEmailAndPassword(auth, email, pass).catch(e => alert("Wrong details!"));
-            }
-        };
-
-        window.resetPass = () => {
-            const email = prompt("Enter your registered email for reset link:");
-            if(email) sendPasswordResetEmail(auth, email).then(() => alert("Reset email sent!")).catch(e => alert(e.message));
-        };
-
-        onAuthStateChanged(auth, user => {
+        onAuthStateChanged(auth, async (user) => {
             if(user) {
                 currentUser = user;
-                updateDoc(doc(db, "users", user.uid), { status: "online" });
-                document.getElementById('auth-screen').classList.add('hidden');
+                await setDoc(doc(db, "users", user.email), { email: user.email }, { merge: true });
+                document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-interface').classList.remove('hidden');
-                loadProfile();
                 loadUsers();
             } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
                 document.getElementById('app-interface').classList.add('hidden');
             }
         });
 
-        // CHAT SYSTEM
+        // USER LIST
         function loadUsers() {
-            onSnapshot(collection(db, "users"), snap => {
+            onSnapshot(collection(db, "users"), (snap) => {
                 const list = document.getElementById('user-list');
                 list.innerHTML = '';
                 snap.forEach(d => {
                     const u = d.data();
-                    if(u.uid !== currentUser.uid) {
+                    if(u.email !== currentUser.email) {
                         const el = document.createElement('div');
                         el.className = 'user-card';
-                        el.innerHTML = `
-                            <div class="avatar-box">
-                                <img src="${u.photo}" class="avatar">
-                                <div class="online-status ${u.status === 'offline' ? 'offline-status' : ''}"></div>
-                            </div>
-                            <div style="flex:1">
-                                <h4 style="font-weight:700; color:#333;">${u.displayName}</h4>
-                                <p style="font-size:12px; color:#888;">@${u.username}</p>
-                            </div>`;
-                        el.onclick = () => openChat(u);
+                        el.innerHTML = `<div class="avatar">${u.email[0].toUpperCase()}</div><div class="user-info"><h4>${u.email.split('@')[0]}</h4><p>Click to chat</p></div>`;
+                        el.onclick = () => openChat(u.email);
                         list.appendChild(el);
                     }
                 });
             });
         }
 
-        function openChat(user) {
-            activeFriend = user;
-            document.getElementById('c-name').innerText = user.displayName;
-            document.getElementById('c-img').src = user.photo;
-            document.getElementById('c-status').innerText = user.status;
-            document.getElementById('c-status').style.color = user.status === 'online' ? '#2ecc71' : '#888';
-            goToPage('chat-page');
-
-            const roomId = [currentUser.uid, user.uid].sort().join('_');
+        // CHAT ENGINE
+        function openChat(email) {
+            activeFriend = email;
+            document.getElementById('chat-name').innerText = email.split('@')[0];
+            document.getElementById('chat-avatar').innerText = email[0].toUpperCase();
+            document.getElementById('chat-page').classList.remove('page-hidden');
+            
+            const roomId = [currentUser.email, email].sort().join('_');
             if(chatSub) chatSub();
-            chatSub = onSnapshot(query(collection(db, "chats", roomId, "messages"), orderBy("time", "asc")), snap => {
+            
+            const q = query(collection(db, "chats", roomId, "messages"), orderBy("time", "asc"));
+            chatSub = onSnapshot(q, (snap) => {
                 const container = document.getElementById('messages-container');
                 container.innerHTML = '';
                 snap.forEach(mDoc => {
                     const m = mDoc.data();
-                    const isMine = m.sender === currentUser.uid;
-                    if(!isMine && !m.read) updateDoc(mDoc.ref, { read: true });
+                    const isMine = m.sender === currentUser.email;
+                    
+                    // Delete for me check
+                    if(m.deletedFor && m.deletedFor.includes(currentUser.email)) return;
 
                     const wrap = document.createElement('div');
-                    wrap.className = `bubble ${isMine ? 'msg-mine' : 'msg-theirs'}`;
-                    const tickColor = m.read ? 'var(--tick-blue)' : '#888';
-                    const tickIcon = isMine ? `<span class="tick" style="color:${tickColor}">${m.read ? '✔✔' : '✔'}</span>` : '';
-                    wrap.innerHTML = `${m.text} ${tickIcon}`;
+                    wrap.className = `msg-wrapper ${isMine ? 'mine msg-mine' : 'theirs msg-theirs'}`;
+                    
+                    if(m.isDeleted) {
+                        wrap.innerHTML = `<div class="bubble deleted-text">🚫 This message was deleted</div>`;
+                    } else {
+                        wrap.innerHTML = `<div class="bubble" onclick="showMenu(event, '${mDoc.id}', ${isMine})">${m.text}</div>`;
+                    }
                     container.appendChild(wrap);
                 });
                 container.scrollTop = container.scrollHeight;
             });
         }
 
+        window.closeChat = () => {
+            document.getElementById('chat-page').classList.add('page-hidden');
+        };
+
         window.sendMsg = async (e) => {
             e.preventDefault();
-            const inp = document.getElementById('msg-input');
-            if(!inp.value.trim()) return;
-            const roomId = [currentUser.uid, activeFriend.uid].sort().join('_');
+            const input = document.getElementById('msg-input');
+            if(!input.value.trim()) return;
+            const roomId = [currentUser.email, activeFriend].sort().join('_');
             await addDoc(collection(db, "chats", roomId, "messages"), {
-                text: inp.value,
-                sender: currentUser.uid,
+                text: input.value,
+                sender: currentUser.email,
                 time: serverTimestamp(),
-                read: false
+                isDeleted: false,
+                deletedFor: []
             });
-            inp.value = '';
-            // STORAGE CLEANUP (Last 500 Messages)
-            const q = query(collection(db, "chats", roomId, "messages"), orderBy("time", "desc"));
-            const snap = await getDocs(q);
-            if(snap.size > 500) snap.docs.slice(500).forEach(d => deleteDoc(d.ref));
+            input.value = '';
         };
 
-        // PROFILE SYSTEM
-        async function loadProfile() {
-            const d = await getDoc(doc(db, "users", currentUser.uid));
-            if(d.exists()){
-                const data = d.data();
-                document.getElementById('p-name').value = data.displayName;
-                document.getElementById('p-bio').value = data.bio;
-                document.getElementById('p-notes').value = data.notes;
-                document.getElementById('p-img').src = data.photo;
+        // DELETE LOGIC
+        window.showMenu = (e, msgId, isMine) => {
+            selectedMsgId = msgId;
+            const menu = document.getElementById('msg-menu');
+            menu.style.display = 'block';
+            menu.style.top = e.pageY + 'px';
+            menu.style.left = (isMine ? e.pageX - 100 : e.pageX) + 'px';
+            document.getElementById('del-everyone-btn').style.display = isMine ? 'block' : 'none';
+            e.stopPropagation();
+        };
+
+        window.deleteMsg = async (type) => {
+            const roomId = [currentUser.email, activeFriend].sort().join('_');
+            const msgRef = doc(db, "chats", roomId, "messages", selectedMsgId);
+            
+            if(type === 'me') {
+                const snap = await getDoc(msgRef);
+                let currentDeletedFor = snap.data().deletedFor || [];
+                currentDeletedFor.push(currentUser.email);
+                await updateDoc(msgRef, { deletedFor: currentDeletedFor });
+            } else {
+                await updateDoc(msgRef, { isDeleted: true, text: "" });
             }
-        }
-
-        window.saveProfile = () => {
-            updateDoc(doc(db, "users", currentUser.uid), {
-                displayName: document.getElementById('p-name').value,
-                bio: document.getElementById('p-bio').value,
-                notes: document.getElementById('p-notes').value
-            }).then(() => {
-                alert("Profile Updated Successfully!");
-                lucide.createIcons();
-            });
+            document.getElementById('msg-menu').style.display = 'none';
         };
 
-        window.updatePhoto = () => {
-            const url = prompt("Enter Direct Image URL for profile photo:");
-            if(url) {
-                updateDoc(doc(db, "users", currentUser.uid), { photo: url });
-                document.getElementById('p-img').src = url;
-            }
-        };
+        document.onclick = () => document.getElementById('msg-menu').style.display = 'none';
 
-        // NAV SYSTEM
-        window.goToPage = (id) => {
-            document.getElementById(id).classList.remove('page-right');
-            lucide.createIcons();
-        };
-        window.goBack = () => {
-            document.querySelectorAll('.page').forEach(p => p.id !== 'list-page' && p.classList.add('page-right'));
-            if(chatSub) chatSub();
-        };
-        window.logout = () => {
-            updateDoc(doc(db, "users", currentUser.uid), { status: "offline" }).then(() => {
-                signOut(auth).then(() => location.reload());
-            });
-        };
-
-        lucide.createIcons();
     </script>
 </body>
 </html>

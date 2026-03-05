@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Passgram | Modern Messenger</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Sab CSS Yahan Hai (Modern Look) --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        body { background: #f0f2f5; height: 100vh; overflow: hidden; }
+        .hidden { display: none !important; }
+
+        /* Login Screen */
+        #login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #0084ff, #00c6ff); }
+        .login-box { background: white; padding: 40px; border-radius: 24px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .brand { font-size: 38px; color: #0084ff; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9; font-size: 15px; }
+        input:focus { border-color: #0084ff; background: #fff; outline: none; }
+        .btn-primary { width: 100%; padding: 14px; background: #0084ff; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-primary:active { transform: scale(0.98); }
+
+        /* Main Chat Layout */
+        #chat-screen { display: flex; height: 100vh; background: white; }
+        .sidebar { width: 320px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; background: #fff; }
+        .side-header { padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .side-header h3 { color: #0084ff; font-weight: 700; }
+        #user-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .user-item { padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; margin-bottom: 5px; border-bottom: 1px solid #fafafa; }
+        .user-item:hover { background: #f0f7ff; }
+        .user-item.active { background: #e7f3ff; color: #0084ff; font-weight: 600; }
+
+        /* Chat Window */
+        .main-chat { flex: 1; display: flex; flex-direction: column; background: #f9f9fb; }
+        #no-chat-selected { height: 100%; display: flex; justify-content: center; align-items: center; color: #ccc; text-align: center; }
+        #active-chat { display: flex; flex-direction: column; height: 100%; }
+        .chat-header { padding: 18px 25px; background: white; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-opacity: 0.05; }
+        
+        /* Message Bubbles */
+        .msg { margin-bottom: 8px; padding: 12px 16px; border-radius: 18px; max-width: 75%; font-size: 14px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .my-msg { align-self: flex-end; background: #0084ff; color: white; border-bottom-right-radius: 4px; }
+        .other-msg { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 4px; }
+
+        /* Input Bar */
+        #msg-form { padding: 20px; display: flex; background: white; border-top: 1px solid #f0f0f0; align-items: center; }
+        #msg-input { flex: 1; margin: 0; border-radius: 12px; border: 1px solid #f0f0f0; padding: 14px; background: #f9f9f9; }
+        .send-btn { background: #0084ff; color: white; border: none; width: 48px; height: 48px; border-radius: 12px; cursor: pointer; margin-left: 10px; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        
+        .logout-btn { background: #fff1f0; color: #ff4d4f; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+
+        @media (max-width: 768px) { .sidebar { width: 80px; } .side-header h3, .user-item span { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <div id="login-screen" class="hidden">
+            <div class="login-box">
+                <h1 class="brand">Passgram</h1>
+                <p style="color: #666; margin-bottom: 20px;">Secure. Modern. Forever.</p>
+                <input type="email" id="email" placeholder="Email Address">
+                <input type="password" id="password" placeholder="Password">
+                <button onclick="login()" class="btn-primary">Login / Sign Up</button>
+            </div>
+        </div>
+
+        <div id="chat-screen" class="hidden">
+            <div class="sidebar">
+                <div class="side-header">
+                    <h3>Passgram</h3>
+                    <button onclick="logout()" class="logout-btn">Exit</button>
+                </div>
+                <div id="user-list"></div>
+            </div>
+
+            <div class="main-chat">
+                <div id="no-chat-selected">
+                    <div>
+                        <div style="font-size: 50px; margin-bottom: 10px;">👋</div>
+                        <p>Select a friend to start chatting</p>
+                    </div>
+                </div>
+
+                <div id="active-chat" class="hidden">
+                    <div class="chat-header">
+                        <span id="chatting-with">Chat</span>
+                    </div>
+                    <div id="messages"></div>
+                    <form id="msg-form" onsubmit="sendMessage(event)">
+                        <input type="text" id="msg-input" placeholder="Write something..." autocomplete="off">
+                        <button type="submit" class="send-btn">➤</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Teri Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCe7d3VLwfSygQD8Z0BK5430sarG6ZMC6M",
+            authDomain: "passgram-49bf6.firebaseapp.com",
+            projectId: "passgram-49bf6",
+            storageBucket: "passgram-49bf6.firebasestorage.app",
+            messagingSenderId: "385060401630",
+            appId: "1:385060401630:web:18fda28052282a80302d4f",
+            measurementId: "G-ZTTQ93JNLD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let selectedUser = null;
+        let unsubscribeChat = null;
+
+        // Login Logic
+        window.login = () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            if(!e || !p) return alert("Email/Password bhulo mat!");
+
+            signInWithEmailAndPassword(auth, e, p)
+                .catch(() => createUserWithEmailAndPassword(auth, e, p))
+                .then((cred) => {
+                    if(cred) setDoc(doc(db, "users", cred.user.email), { email: cred.user.email });
+                })
+                .catch(err => alert(err.message));
+        };
+
+        window.logout = () => signOut(auth);
+
+        // Load Friends
+        const loadUsers = (currentUser) => {
+            onSnapshot(collection(db, "users"), (snap) => {
+                const list = document.getElementById('user-list');
+                list.innerHTML = '';
+                snap.forEach(uDoc => {
+                    const userData = uDoc.data();
+                    if(userData.email !== currentUser.email) {
+                        const div = document.createElement('div');
+                        div.className = 'user-item';
+                        div.innerHTML = `<span>${userData.email.split('@')[0]}</span>`;
+                        div.onclick = () => startChat(userData.email, div);
+                        list.appendChild(div);
+                    }
+                });
+            });
+        };
+
+        // Private Chatting
+        const startChat = (otherEmail, element) => {
+            selectedUser = otherEmail;
+            
+            // UI Update
+            document.querySelectorAll('.user-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('no-chat-selected').classList.add('hidden');
+            document.getElementById('active-chat').classList.remove('hidden');
+            document.getElementById('chatting-with').innerText = otherEmail.split('@')[0];
+            
+            const chatID = [auth.currentUser.email, otherEmail].sort().join('_');
+            if(unsubscribeChat) unsubscribeChat();
+            
+            const q = query(collection(db, "chats", chatID, "messages"), orderBy("time", "asc"));
+            unsubscribeChat = onSnapshot(q, (snap) => {
+                const box = document.getElementById('messages');
+                box.innerHTML = '';
+                snap.forEach(mDoc => {
+                    const data = mDoc.data();
+                    const div = document.createElement('div');
+                    div.className = `msg ${data.sender === auth.currentUser.email ? 'my-msg' : 'other-msg'}`;
+                    div.innerText = data.text;
+                    box.appendChild(div);
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        };
+
+        window.sendMessage = async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('msg-input');
+            if(!input.value.trim() || !selectedUser) return;
+
+            const chatID = [auth.currentUser.email, selectedUser].sort().join('_');
+            await addDoc(collection(db, "chats", chatID, "messages"), {
+                text: input.value,
+                sender: auth.currentUser.email,
+                time: serverTimestamp()
+            });
+            input.value = '';
+        };
+
+        // Auth Observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('chat-screen').classList.remove('hidden');
+                loadUsers(user);
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('chat-screen').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

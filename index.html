@@ -3,55 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Passgram | Modern Messenger</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Passgram | Messenger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Sab CSS Yahan Hai (Modern Look) --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        /* --- Modern CSS (Passgram Look) --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: 0.2s ease; }
         body { background: #f0f2f5; height: 100vh; overflow: hidden; }
         .hidden { display: none !important; }
 
         /* Login Screen */
         #login-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #0084ff, #00c6ff); }
-        .login-box { background: white; padding: 40px; border-radius: 24px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .brand { font-size: 38px; color: #0084ff; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
-        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9; font-size: 15px; }
+        .login-box { background: white; padding: 40px; border-radius: 24px; text-align: center; width: 90%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .brand-name { font-size: 42px; color: #0084ff; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 5px; }
+        .login-box p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 1.5px solid #f0f0f0; border-radius: 12px; background: #f9f9f9; font-size: 15px; }
         input:focus { border-color: #0084ff; background: #fff; outline: none; }
-        .btn-primary { width: 100%; padding: 14px; background: #0084ff; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        .btn-primary:active { transform: scale(0.98); }
+        .btn-main { width: 100%; padding: 15px; background: #0084ff; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 15px; }
 
-        /* Main Chat Layout */
+        /* Main App Layout */
         #chat-screen { display: flex; height: 100vh; background: white; }
+        
+        /* Sidebar */
         .sidebar { width: 320px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; background: #fff; }
-        .side-header { padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .side-header h3 { color: #0084ff; font-weight: 700; }
+        .side-header { padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .side-header h2 { color: #0084ff; font-size: 22px; font-weight: 800; }
         #user-list { flex: 1; overflow-y: auto; padding: 10px; }
-        .user-item { padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; margin-bottom: 5px; border-bottom: 1px solid #fafafa; }
-        .user-item:hover { background: #f0f7ff; }
-        .user-item.active { background: #e7f3ff; color: #0084ff; font-weight: 600; }
+        .user-item { padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; margin-bottom: 5px; border: 1px solid transparent; }
+        .user-item:hover { background: #f5f9ff; }
+        .user-item.active { background: #e7f3ff; color: #0084ff; font-weight: 600; border-color: #d0e7ff; }
+        .online-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; margin-right: 12px; }
 
-        /* Chat Window */
-        .main-chat { flex: 1; display: flex; flex-direction: column; background: #f9f9fb; }
-        #no-chat-selected { height: 100%; display: flex; justify-content: center; align-items: center; color: #ccc; text-align: center; }
-        #active-chat { display: flex; flex-direction: column; height: 100%; }
-        .chat-header { padding: 18px 25px; background: white; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-opacity: 0.05; }
+        /* Chat View */
+        .chat-view { flex: 1; display: flex; flex-direction: column; background: #f4f7f9; }
+        #no-chat { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #abbac4; }
+        #active-chat-area { display: flex; flex-direction: column; height: 100%; }
         
-        /* Message Bubbles */
-        .msg { margin-bottom: 8px; padding: 12px 16px; border-radius: 18px; max-width: 75%; font-size: 14px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .my-msg { align-self: flex-end; background: #0084ff; color: white; border-bottom-right-radius: 4px; }
-        .other-msg { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 4px; }
-
-        /* Input Bar */
-        #msg-form { padding: 20px; display: flex; background: white; border-top: 1px solid #f0f0f0; align-items: center; }
-        #msg-input { flex: 1; margin: 0; border-radius: 12px; border: 1px solid #f0f0f0; padding: 14px; background: #f9f9f9; }
-        .send-btn { background: #0084ff; color: white; border: none; width: 48px; height: 48px; border-radius: 12px; cursor: pointer; margin-left: 10px; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        .chat-top-bar { padding: 18px 25px; background: white; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 17px; }
+        #messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; background: #e5ddd5 url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; }
         
-        .logout-btn { background: #fff1f0; color: #ff4d4f; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+        /* Bubbles */
+        .bubble { margin-bottom: 10px; padding: 10px 16px; border-radius: 16px; max-width: 75%; font-size: 14.5px; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.1); word-wrap: break-word; }
+        .mine { align-self: flex-end; background: #0084ff; color: white; border-bottom-right-radius: 2px; }
+        .theirs { align-self: flex-start; background: white; color: #333; border-bottom-left-radius: 2px; }
 
-        @media (max-width: 768px) { .sidebar { width: 80px; } .side-header h3, .user-item span { display: none; } }
+        /* Input Area */
+        .bottom-bar { padding: 15px 20px; background: white; border-top: 1px solid #f0f0f0; display: flex; align-items: center; }
+        #msg-input { flex: 1; border: 1px solid #f0f0f0; border-radius: 25px; padding: 12px 20px; background: #f9f9f9; font-size: 14px; margin: 0; }
+        .send-btn { background: #0084ff; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; margin-left: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        
+        .logout-link { color: #ff4d4f; font-size: 12px; cursor: pointer; font-weight: 500; text-decoration: none; border: 1px solid #ff4d4f; padding: 4px 10px; border-radius: 6px; }
+
+        @media (max-width: 650px) { .sidebar { width: 85px; } .side-header h2, .user-item span { display: none; } .side-header { justify-content: center; } }
     </style>
 </head>
 <body>
@@ -59,38 +62,38 @@
     <div id="app">
         <div id="login-screen" class="hidden">
             <div class="login-box">
-                <h1 class="brand">Passgram</h1>
-                <p style="color: #666; margin-bottom: 20px;">Secure. Modern. Forever.</p>
+                <h1 class="brand-name">Passgram</h1>
+                <p>Private Messaging for Friends</p>
                 <input type="email" id="email" placeholder="Email Address">
                 <input type="password" id="password" placeholder="Password">
-                <button onclick="login()" class="btn-primary">Login / Sign Up</button>
+                <button onclick="handleLogin()" class="btn-main">Login / Create Account</button>
             </div>
         </div>
 
         <div id="chat-screen" class="hidden">
             <div class="sidebar">
                 <div class="side-header">
-                    <h3>Passgram</h3>
-                    <button onclick="logout()" class="logout-btn">Exit</button>
+                    <h2>Passgram</h2>
+                    <a onclick="logout()" class="logout-link">Exit</a>
                 </div>
-                <div id="user-list"></div>
+                <div id="user-list">
+                    <p style="text-align:center; color:#999; margin-top:20px; font-size:12px;">Loading friends...</p>
+                </div>
             </div>
 
-            <div class="main-chat">
-                <div id="no-chat-selected">
-                    <div>
-                        <div style="font-size: 50px; margin-bottom: 10px;">👋</div>
-                        <p>Select a friend to start chatting</p>
-                    </div>
+            <div class="chat-view">
+                <div id="no-chat">
+                    <span style="font-size: 60px;">🛡️</span>
+                    <p style="margin-top:15px; font-weight:500;">Select a friend to chat securely</p>
                 </div>
 
-                <div id="active-chat" class="hidden">
-                    <div class="chat-header">
-                        <span id="chatting-with">Chat</span>
+                <div id="active-chat-area" class="hidden">
+                    <div class="chat-top-bar">
+                        <span id="chatting-with-name">Dost ka Naam</span>
                     </div>
-                    <div id="messages"></div>
-                    <form id="msg-form" onsubmit="sendMessage(event)">
-                        <input type="text" id="msg-input" placeholder="Write something..." autocomplete="off">
+                    <div id="messages-container"></div>
+                    <form class="bottom-bar" onsubmit="doSendMessage(event)">
+                        <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off">
                         <button type="submit" class="send-btn">➤</button>
                     </form>
                 </div>
@@ -103,7 +106,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Teri Firebase Config
+        // Firebase Configuration (Teri Keys)
         const firebaseConfig = {
             apiKey: "AIzaSyCe7d3VLwfSygQD8Z0BK5430sarG6ZMC6M",
             authDomain: "passgram-49bf6.firebaseapp.com",
@@ -118,95 +121,105 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let selectedUser = null;
-        let unsubscribeChat = null;
+        let selectedFriend = null;
+        let chatUnsubscribe = null;
 
-        // Login Logic
-        window.login = () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-            if(!e || !p) return alert("Email/Password bhulo mat!");
+        // Login System
+        window.handleLogin = () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            if(!email || !pass) return alert("Email and Password are required!");
 
-            signInWithEmailAndPassword(auth, e, p)
-                .catch(() => createUserWithEmailAndPassword(auth, e, p))
-                .then((cred) => {
-                    if(cred) setDoc(doc(db, "users", cred.user.email), { email: cred.user.email });
-                })
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch(() => createUserWithEmailAndPassword(auth, email, pass))
                 .catch(err => alert(err.message));
         };
 
         window.logout = () => signOut(auth);
 
-        // Load Friends
-        const loadUsers = (currentUser) => {
+        // Load Friend List
+        const fetchUsers = (me) => {
             onSnapshot(collection(db, "users"), (snap) => {
-                const list = document.getElementById('user-list');
-                list.innerHTML = '';
+                const listDiv = document.getElementById('user-list');
+                listDiv.innerHTML = '';
+                let foundAny = false;
+
                 snap.forEach(uDoc => {
-                    const userData = uDoc.data();
-                    if(userData.email !== currentUser.email) {
-                        const div = document.createElement('div');
-                        div.className = 'user-item';
-                        div.innerHTML = `<span>${userData.email.split('@')[0]}</span>`;
-                        div.onclick = () => startChat(userData.email, div);
-                        list.appendChild(div);
+                    const uData = uDoc.data();
+                    if(uData.email !== me.email) {
+                        foundAny = true;
+                        const item = document.createElement('div');
+                        item.className = 'user-item';
+                        item.innerHTML = `<div class="online-dot"></div><span>${uData.email.split('@')[0]}</span>`;
+                        item.onclick = () => openFriendChat(uData.email, item);
+                        listDiv.appendChild(item);
                     }
                 });
+                if(!foundAny) listDiv.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px; font-size:12px;">No friends found. Tell your friend to login!</p>';
             });
         };
 
-        // Private Chatting
-        const startChat = (otherEmail, element) => {
-            selectedUser = otherEmail;
+        // Open Private Chat Room
+        const openFriendChat = (friendEmail, element) => {
+            selectedFriend = friendEmail;
             
-            // UI Update
-            document.querySelectorAll('.user-item').forEach(i => i.classList.remove('active'));
+            // UI Updates
+            document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
-            document.getElementById('no-chat-selected').classList.add('hidden');
-            document.getElementById('active-chat').classList.remove('hidden');
-            document.getElementById('chatting-with').innerText = otherEmail.split('@')[0];
+            document.getElementById('no-chat').classList.add('hidden');
+            document.getElementById('active-chat-area').classList.remove('hidden');
+            document.getElementById('chatting-with-name').innerText = friendEmail.split('@')[0];
             
-            const chatID = [auth.currentUser.email, otherEmail].sort().join('_');
-            if(unsubscribeChat) unsubscribeChat();
+            // Chat Room ID Logic
+            const roomId = [auth.currentUser.email, friendEmail].sort().join('_');
             
-            const q = query(collection(db, "chats", chatID, "messages"), orderBy("time", "asc"));
-            unsubscribeChat = onSnapshot(q, (snap) => {
-                const box = document.getElementById('messages');
-                box.innerHTML = '';
+            if(chatUnsubscribe) chatUnsubscribe();
+            
+            const q = query(collection(db, "chats", roomId, "messages"), orderBy("time", "asc"));
+            chatUnsubscribe = onSnapshot(q, (snap) => {
+                const msgBox = document.getElementById('messages-container');
+                msgBox.innerHTML = '';
                 snap.forEach(mDoc => {
-                    const data = mDoc.data();
-                    const div = document.createElement('div');
-                    div.className = `msg ${data.sender === auth.currentUser.email ? 'my-msg' : 'other-msg'}`;
-                    div.innerText = data.text;
-                    box.appendChild(div);
+                    const mData = mDoc.data();
+                    const bbl = document.createElement('div');
+                    bbl.className = `bubble ${mData.sender === auth.currentUser.email ? 'mine' : 'theirs'}`;
+                    bbl.innerText = mData.text;
+                    msgBox.appendChild(bbl);
                 });
-                box.scrollTop = box.scrollHeight;
+                msgBox.scrollTop = msgBox.scrollHeight;
             });
         };
 
-        window.sendMessage = async (e) => {
+        // Send Message
+        window.doSendMessage = async (e) => {
             e.preventDefault();
-            const input = document.getElementById('msg-input');
-            if(!input.value.trim() || !selectedUser) return;
+            const inp = document.getElementById('msg-input');
+            if(!inp.value.trim() || !selectedFriend) return;
 
-            const chatID = [auth.currentUser.email, selectedUser].sort().join('_');
-            await addDoc(collection(db, "chats", chatID, "messages"), {
-                text: input.value,
+            const roomId = [auth.currentUser.email, selectedFriend].sort().join('_');
+            await addDoc(collection(db, "chats", roomId, "messages"), {
+                text: inp.value,
                 sender: auth.currentUser.email,
                 time: serverTimestamp()
             });
-            input.value = '';
+            inp.value = '';
         };
 
-        // Auth Observer
-        onAuthStateChanged(auth, (user) => {
+        // Auth Observer (Main Logic)
+        onAuthStateChanged(auth, async (user) => {
+            const loginUI = document.getElementById('login-screen');
+            const chatUI = document.getElementById('chat-screen');
+            
             if (user) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('chat-screen').classList.remove('hidden');
-                loadUsers(user);
+                // FORCE SAVE: Login hote hi user ko list mein daal do
+                await setDoc(doc(db, "users", user.email), { email: user.email }, { merge: true });
+                
+                loginUI.classList.add('hidden');
+                chatUI.classList.remove('hidden');
+                fetchUsers(user);
             } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('chat-screen').classList.add('hidden');
+                loginUI.classList.remove('hidden');
+                chatUI.classList.add('hidden');
             }
         });
     </script>

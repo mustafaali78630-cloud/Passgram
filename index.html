@@ -25,11 +25,11 @@
         #login-screen { height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; }
         .login-card { background: white; padding: 35px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); color: #1a1a1a; }
         .login-card h1 { font-size: 35px; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 15px; font-size: 16px; background: #f9f9f9; color: #1a1a1a; }
-        .pwd-container { position: relative; }
-        .pwd-container i { position: absolute; right: 15px; top: 27px; color: #888; cursor: pointer; font-size: 18px; }
-        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        /* Google Button Style */
+        .google-btn { width: 100%; padding: 15px; background: white; color: #444; border: 1px solid #ddd; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; }
+        .google-btn img { width: 20px; }
+        
         #app-interface { height: 100%; width: 100%; position: relative; display: flex; overflow: hidden; }
         .page { height: 100%; width: 100%; position: absolute; top: 0; left: 0; background: var(--bg); transition: transform 0.3s ease-in-out; z-index: 10; display: flex; flex-direction: column; }
         .page-hidden { transform: translateX(100%); }
@@ -39,7 +39,8 @@
         #user-list { padding: 10px; overflow-y: auto; flex: 1; }
         .user-card { display: flex; align-items: center; padding: 15px; border-radius: 18px; margin-bottom: 8px; cursor: pointer; }
         .user-card:active { background: var(--border); }
-        .avatar { width: 50px; height: 50px; background: #e7f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0084ff; margin-right: 15px; font-size: 20px; flex-shrink: 0; }
+        .avatar { width: 50px; height: 50px; background: #e7f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0084ff; margin-right: 15px; font-size: 20px; flex-shrink: 0; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .user-info h4 { font-size: 16px; font-weight: 600; color: var(--text); }
         .bottom-nav { display: flex; justify-content: space-around; background: var(--bg); border-top: 1px solid var(--border); padding: 12px 0; padding-bottom: max(12px, env(safe-area-inset-bottom)); flex-shrink: 0; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; font-size: 11px; cursor: pointer; gap: 6px; font-weight: 600; }
@@ -50,15 +51,7 @@
         
         /* ANALOG CLOCK STYLES */
         .clock-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--chat-bg); }
-        .clock {
-            background: var(--clock-face);
-            width: 280px; height: 280px;
-            border-radius: 50%;
-            border: 10px solid #333;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.5s ease;
-        }
+        .clock { background: var(--clock-face); width: 280px; height: 280px; border-radius: 50%; border: 10px solid #333; position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.5s ease; }
         .dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .hour-hand { position: absolute; z-index: 5; width: 6px; height: 60px; background: #333; top: 80px; left: 50%; transform-origin: 50% 60px; margin-left: -3px; border-radius: 4px; }
         .minute-hand { position: absolute; z-index: 6; width: 4px; height: 90px; background: #666; top: 50px; left: 50%; transform-origin: 50% 90px; margin-left: -2px; border-radius: 4px; }
@@ -76,7 +69,8 @@
         .typing-label { font-size: 12px; color: #4caf50; font-weight: 600; display: none; }
         .clock-theme-btn { margin-top: 25px; padding: 10px 20px; border-radius: 20px; background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
         .profile-container { padding: 30px; text-align: center; }
-        .profile-pic-large { width: 100px; height: 100px; background: #e7f3ff; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--primary); }
+        .profile-pic-large { width: 100px; height: 100px; background: #e7f3ff; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--primary); overflow: hidden; }
+        .profile-pic-large img { width: 100%; height: 100%; object-fit: cover; }
 
         #messages-container { flex: 1; padding: 15px; overflow-y: auto; background: var(--chat-bg); display: flex; flex-direction: column; gap: 8px; }
         .msg-wrapper { display: flex; flex-direction: column; max-width: 80%; position: relative; margin-bottom: 4px; }
@@ -103,13 +97,12 @@
     <div id="login-screen" class="hidden">
         <div class="login-card">
             <h1>Passgram</h1>
-            <input type="email" id="email" placeholder="Email">
-            <div class="pwd-container">
-                <input type="password" id="password" placeholder="Password">
-                <i class="fa-solid fa-eye" id="togglePwdIcon" onclick="togglePwd()"></i>
-            </div>
-            <p id="login-error" style="color:#ff4d4f; font-size:13px; margin-top:10px; display:none;"></p>
-            <button class="btn" id="login-btn" onclick="authAction()">Login</button>
+            <p style="color:#666; margin-bottom:10px;">Connect with real people securely</p>
+            <button class="google-btn" onclick="loginWithGoogle()">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="G">
+                Continue with Google
+            </button>
+            <p id="login-error" style="color:#ff4d4f; font-size:13px; margin-top:15px; display:none;"></p>
         </div>
     </div>
 
@@ -146,13 +139,13 @@
                 <i class="fa-solid fa-xmark settings-btn" onclick="switchTab('list-page')"></i>
             </div>
             <div class="profile-container">
-                <div class="profile-pic-large" id="my-profile-avatar">P</div>
-                <h3 id="my-profile-name">User Name</h3>
-                <p id="my-profile-email" style="color:#888; margin-top: 10px; font-size: 16px;">email@example.com</p>
+                <div class="profile-pic-large" id="my-profile-avatar"></div>
+                <h3 id="my-profile-name">Loading...</h3>
+                <p id="my-profile-email" style="color:#888; margin-top: 10px; font-size: 16px;">...</p>
                 <div style="margin-top: 40px; padding: 20px; background: var(--input-bg); border-radius: 15px; text-align: left;">
                     <small style="color:var(--primary)">Account Information</small>
-                    <p style="margin-top:10px;"><b>Privacy:</b> Secured by Passgram</p>
-                    <p style="margin-top:5px;"><b>Status:</b> Active Member</p>
+                    <p style="margin-top:10px;"><b>Privacy:</b> Secured by Google</p>
+                    <p style="margin-top:5px;"><b>Status:</b> Verified Member</p>
                 </div>
             </div>
         </div>
@@ -177,7 +170,7 @@
         <div id="chat-page" class="page page-hidden">
             <div class="chat-header">
                 <i class="fa-solid fa-arrow-left back-btn" onclick="closeChat()"></i>
-                <div class="avatar" style="width:35px; height:35px; font-size:14px;" id="chat-avatar">?</div>
+                <div class="avatar" style="width:35px; height:35px;" id="chat-avatar"></div>
                 <div style="flex:1;">
                     <h4 id="chat-name">User</h4>
                     <span id="typing-indicator" class="typing-label">typing...</span>
@@ -203,7 +196,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, setDoc, doc, updateDoc, deleteDoc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -218,45 +211,23 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
         let currentUser = null, activeFriend = null, chatSub = null, selectedMsgId = null, typingTimeout = null;
 
-        // AUTH ACTION WITH FEEDBACK
-        window.authAction = () => {
-            const e = document.getElementById('email').value, p = document.getElementById('password').value;
+        // GOOGLE LOGIN
+        window.loginWithGoogle = async () => {
             const errBox = document.getElementById('login-error');
-            const btn = document.getElementById('login-btn');
-
-            if(!e || !p) {
-                errBox.innerText = "Please enter both Email and Password";
+            errBox.style.display = 'none';
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                errBox.innerText = "Login failed. Please try again.";
                 errBox.style.display = "block";
-                return;
             }
-
-            errBox.style.display = "none";
-            btn.innerText = "Logging in...";
-            btn.disabled = true;
-
-            signInWithEmailAndPassword(auth, e, p)
-            .catch((error) => {
-                if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    // Try to Register if user doesn't exist, else show wrong password
-                    createUserWithEmailAndPassword(auth, e, p).catch((regErr) => {
-                        btn.innerText = "Join Now";
-                        btn.disabled = false;
-                        errBox.innerText = "Login failed: Check your credentials.";
-                        errBox.style.display = "block";
-                    });
-                } else {
-                    btn.innerText = "Join Now";
-                    btn.disabled = false;
-                    errBox.innerText = "Error: " + error.message;
-                    errBox.style.display = "block";
-                }
-            });
         };
 
-        // CLOCK LOGIC
+        // CLOCK LOGIC (AS IS)
         function initClock() {
             const wrapper = document.getElementById("dial-wrapper");
             wrapper.innerHTML = "";
@@ -292,44 +263,57 @@
         onAuthStateChanged(auth, async (u) => {
             if(u) {
                 currentUser = u; 
-                await setDoc(doc(db, "users", u.email), { email: u.email, isTyping: false }, { merge: true });
+                await setDoc(doc(db, "users", u.email.toLowerCase()), { 
+                    email: u.email.toLowerCase(), 
+                    name: u.displayName, 
+                    photo: u.photoURL,
+                    isTyping: false 
+                }, { merge: true });
                 document.getElementById('login-screen').classList.add('hidden'); 
                 document.getElementById('app-interface').classList.remove('hidden');
                 loadUsers(); initClock();
             } else {
                 document.getElementById('login-screen').classList.remove('hidden'); 
                 document.getElementById('app-interface').classList.add('hidden');
-                document.getElementById('login-btn').innerText = "Join Now";
-                document.getElementById('login-btn').disabled = false;
             }
         });
 
         function loadUsers() {
             onSnapshot(collection(db, "users"), (s) => {
                 const l = document.getElementById('user-list'); l.innerHTML = '';
+                const uniqueUsers = new Map();
+                
                 s.forEach(d => {
                     const u = d.data();
-                    if(u.email !== currentUser.email) {
-                        const name = u.email.split('@')[0];
-                        const e = document.createElement('div'); e.className = 'user-card';
-                        e.innerHTML = `<div class="avatar">${name[0].toUpperCase()}</div><div class="user-info"><h4>${name}</h4><p>${u.isTyping ? '<span style="color:#4caf50">Typing...</span>' : 'Online'}</p></div>`;
-                        e.onclick = () => openChat(u.email, name); l.appendChild(e);
+                    if(u.email && u.email !== currentUser.email.toLowerCase()) {
+                        uniqueUsers.set(u.email.toLowerCase(), u);
                     }
+                });
+
+                uniqueUsers.forEach((u, email) => {
+                    const e = document.createElement('div'); e.className = 'user-card';
+                    e.innerHTML = `
+                        <div class="avatar">${u.photo ? `<img src="${u.photo}">` : u.name[0].toUpperCase()}</div>
+                        <div class="user-info">
+                            <h4>${u.name}</h4>
+                            <p>${u.isTyping ? '<span style="color:#4caf50">Typing...</span>' : 'Online'}</p>
+                        </div>`;
+                    e.onclick = () => openChat(email, u.name, u.photo); l.appendChild(e);
                 });
             });
         }
 
-        window.openChat = (email, name) => {
+        window.openChat = (email, name, photo) => {
             activeFriend = email; 
             document.getElementById('chat-name').innerText = name;
-            document.getElementById('chat-avatar').innerText = name[0].toUpperCase();
+            document.getElementById('chat-avatar').innerHTML = photo ? `<img src="${photo}">` : name[0].toUpperCase();
             document.getElementById('chat-page').classList.remove('page-hidden');
             
             onSnapshot(doc(db, "users", email), (d) => {
                 if(d.exists()) document.getElementById('typing-indicator').style.display = d.data().isTyping ? 'block' : 'none';
             });
 
-            const rid = [currentUser.email, email].sort().join('_');
+            const rid = [currentUser.email.toLowerCase(), email].sort().join('_');
             if(chatSub) chatSub();
             const container = document.getElementById('messages-container');
             container.innerHTML = ''; 
@@ -339,9 +323,9 @@
                 sn.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const m = change.doc.data();
-                        const isM = m.sender === currentUser.email;
+                        const isM = m.sender === currentUser.email.toLowerCase();
                         if(!isM && m.status !== 'read') updateDoc(doc(db, "chats", rid, "messages", change.doc.id), { status: 'read' });
-                        if(m.deletedFor && m.deletedFor.includes(currentUser.email)) return;
+                        if(m.deletedFor && m.deletedFor.includes(currentUser.email.toLowerCase())) return;
                         
                         const w = document.createElement('div'); w.className = `msg-wrapper ${isM ? 'mine msg-mine' : 'theirs msg-theirs'}`;
                         let tickMarkup = isM ? `<span class="tick ${m.status==='read'?'tick-read':''}">✓${m.status==='read'?'✓':''}</span>` : '';
@@ -361,31 +345,27 @@
             if(pageId === 'clock-page') document.querySelector('.nav-item:nth-child(3)').classList.add('active');
             if(pageId === 'profile-page') { 
                 document.querySelector('.nav-item:nth-child(5)').classList.add('active');
-                document.getElementById('my-profile-name').innerText = currentUser.email.split('@')[0];
+                document.getElementById('my-profile-name').innerText = currentUser.displayName;
                 document.getElementById('my-profile-email').innerText = currentUser.email;
-                document.getElementById('my-profile-avatar').innerText = currentUser.email[0].toUpperCase();
+                document.getElementById('my-profile-avatar').innerHTML = `<img src="${currentUser.photoURL}">`;
             }
         };
 
         window.sendTypingStatus = () => {
             if(!activeFriend) return;
-            updateDoc(doc(db, "users", currentUser.email), { isTyping: true });
+            updateDoc(doc(db, "users", currentUser.email.toLowerCase()), { isTyping: true });
             clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => updateDoc(doc(db, "users", currentUser.email), { isTyping: false }), 2000);
+            typingTimeout = setTimeout(() => updateDoc(doc(db, "users", currentUser.email.toLowerCase()), { isTyping: false }), 2000);
         };
 
         window.sendMsg = async (e) => {
             e.preventDefault(); const i = document.getElementById('msg-input'); const v = i.value.trim(); if(!v) return;
-            const rid = [currentUser.email, activeFriend].sort().join('_'); i.value = '';
-            await addDoc(collection(db, "chats", rid, "messages"), { text: v, sender: currentUser.email, time: serverTimestamp(), status: 'sent', deletedFor: [] });
-            updateDoc(doc(db, "users", currentUser.email), { isTyping: false });
+            const rid = [currentUser.email.toLowerCase(), activeFriend].sort().join('_'); i.value = '';
+            await addDoc(collection(db, "chats", rid, "messages"), { text: v, sender: currentUser.email.toLowerCase(), time: serverTimestamp(), status: 'sent', deletedFor: [] });
+            updateDoc(doc(db, "users", currentUser.email.toLowerCase()), { isTyping: false });
         };
 
         window.closeChat = () => { document.getElementById('chat-page').classList.add('page-hidden'); activeFriend = null; if(chatSub) chatSub(); };
-        window.togglePwd = () => {
-            const p = document.getElementById('password'); const i = document.getElementById('togglePwdIcon');
-            p.type = p.type === 'password' ? 'text' : 'password'; i.classList.toggle('fa-eye'); i.classList.toggle('fa-eye-slash');
-        };
         window.logout = () => { closeSettings(); signOut(auth); };
         window.openSettings = () => document.getElementById('settings-modal').classList.remove('hidden');
         window.closeSettings = () => document.getElementById('settings-modal').classList.add('hidden');
@@ -393,7 +373,7 @@
         window.toggleHeaderMenu = (e) => { const m = document.getElementById('chat-header-menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; e.stopPropagation(); };
         window.clearChatHistory = async () => {
             if(!confirm("Clear history?")) return;
-            const rid = [currentUser.email, activeFriend].sort().join('_');
+            const rid = [currentUser.email.toLowerCase(), activeFriend].sort().join('_');
             const q = await getDocs(query(collection(db, "chats", rid, "messages")));
             q.forEach(d => deleteDoc(doc(db, "chats", rid, "messages", d.id)));
         };
@@ -403,9 +383,9 @@
             document.getElementById('del-everyone-btn').style.display = isM ? 'flex' : 'none'; e.stopPropagation();
         };
         window.deleteMsg = async (t) => {
-            const rid = [currentUser.email, activeFriend].sort().join('_'); const ref = doc(db, "chats", rid, "messages", selectedMsgId);
+            const rid = [currentUser.email.toLowerCase(), activeFriend].sort().join('_'); const ref = doc(db, "chats", rid, "messages", selectedMsgId);
             if(t === 'me') {
-                const s = await getDoc(ref); let d = s.data().deletedFor || []; d.push(currentUser.email); await updateDoc(ref, { deletedFor: d });
+                const s = await getDoc(ref); let d = s.data().deletedFor || []; d.push(currentUser.email.toLowerCase()); await updateDoc(ref, { deletedFor: d });
             } else await deleteDoc(ref);
             document.getElementById('msg-menu').style.display = 'none';
         };

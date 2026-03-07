@@ -22,13 +22,14 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); color: var(--text); position: fixed; transition: background 0.3s, color 0.3s; }
         .hidden { display: none !important; }
-        #login-screen { height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; }
+        #login-screen { height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0084ff, #00c6ff); padding: 20px; z-index: 2000; position: relative; }
         .login-card { background: white; padding: 35px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); color: #1a1a1a; }
         .login-card h1 { font-size: 35px; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
         input { width: 100%; padding: 15px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 15px; font-size: 16px; background: #f9f9f9; color: #1a1a1a; }
         .pwd-container { position: relative; }
         .pwd-container i { position: absolute; right: 15px; top: 27px; color: #888; cursor: pointer; font-size: 18px; }
-        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
         #app-interface { height: 100%; width: 100%; position: relative; display: flex; overflow: hidden; }
         .page { height: 100%; width: 100%; position: absolute; top: 0; left: 0; background: var(--bg); transition: transform 0.3s ease-in-out; z-index: 10; display: flex; flex-direction: column; }
         .page-hidden { transform: translateX(100%); }
@@ -61,25 +62,33 @@
         .chat-input-area { padding: 10px 15px; background: var(--bg); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
         #msg-input { flex: 1; border-radius: 25px; padding: 12px 18px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 16px; outline: none; }
         .send-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        #settings-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: flex; justify-content: center; align-items: flex-end; }
+        #settings-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: flex; justify-content: center; align-items: flex-end; }
         .settings-card { background: var(--bg); padding: 25px 20px; border-top-left-radius: 25px; border-top-right-radius: 25px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); }
         .setting-item { display: flex; align-items: center; padding: 15px 10px; color: var(--text); cursor: pointer; border-bottom: 1px solid var(--border); }
         .setting-item i { width: 30px; font-size: 20px; color: var(--primary); margin-right: 15px; text-align: center; }
         .setting-danger { color: #ff4d4f !important; }
+
+        .clock-container { flex: 1; display: flex; justify-content: center; align-items: center; background: var(--bg); }
+        .clock { width: 220px; height: 220px; border: 8px solid var(--primary); border-radius: 50%; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 10px; background: var(--text); }
+        .hour-hand { width: 6px; height: 50px; z-index: 3; }
+        .min-hand { width: 4px; height: 75px; z-index: 2; }
+        .sec-hand { width: 2px; height: 85px; background: #ff4d4f; z-index: 1; }
+        .center-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="hidden">
+    <div id="login-screen">
         <div class="login-card">
             <h1>Passgram</h1>
-            <p>Connect with friends instantly</p>
+            <p id="login-msg">Connect with friends instantly</p>
             <input type="email" id="email" placeholder="Email">
             <div class="pwd-container">
                 <input type="password" id="password" placeholder="Password">
                 <i class="fa-solid fa-eye" id="togglePwdIcon" onclick="togglePwd()"></i>
             </div>
-            <button class="btn" onclick="authAction()">Join Now</button>
+            <button class="btn" id="login-btn" onclick="authAction()">Join Now</button>
         </div>
     </div>
 
@@ -90,30 +99,31 @@
                 <i class="fa-solid fa-times" onclick="closeSettings()" style="font-size:24px; cursor:pointer;"></i>
             </div>
             <div class="setting-item" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i><span>Dark Mode</span></div>
-            <div class="setting-item"><i class="fa-solid fa-key"></i><span>Account</span></div>
-            <div class="setting-item"><i class="fa-solid fa-shield-halved"></i><span>Privacy</span></div>
-            <div class="setting-item"><i class="fa-solid fa-message"></i><span>Chats</span></div>
-            <div class="setting-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></div>
-            <div class="setting-item"><i class="fa-solid fa-database"></i><span>Storage</span></div>
-            <div class="setting-item"><i class="fa-solid fa-globe"></i><span>Language</span></div>
-            <div class="setting-item"><i class="fa-solid fa-lock"></i><span>Security</span></div>
             <div class="setting-item setting-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></div>
-            </div>
+        </div>
     </div>
 
     <div id="app-interface" class="hidden">
         <div id="list-page" class="page">
             <div class="header">
-                <h2>Passgram</h2>
+                <h2 id="page-title">Passgram</h2>
                 <span class="settings-btn" onclick="openSettings()"><i class="fa-solid fa-gear"></i></span>
             </div>
             <div id="user-list"></div>
+            <div id="clock-page" class="clock-container hidden">
+                <div class="clock">
+                    <div class="hand hour-hand" id="hour"></div>
+                    <div class="hand min-hand" id="minutes"></div>
+                    <div class="hand sec-hand" id="seconds"></div>
+                    <div class="center-dot"></div>
+                </div>
+            </div>
             <div class="bottom-nav">
-                <div class="nav-item active"><i class="fa-solid fa-comment-dots"></i><span>Chats</span></div>
-                <div class="nav-item"><i class="fa-solid fa-circle-notch"></i><span>Status</span></div>
-                <div class="nav-item"><i class="fa-solid fa-plus-circle"></i><span>Create</span></div>
-                <div class="nav-item"><i class="fa-solid fa-users"></i><span>Groups</span></div>
-                <div class="nav-item"><i class="fa-solid fa-user"></i><span>Profile</span></div>
+                <div class="nav-item active" onclick="switchTab('chats', this)"><i class="fa-solid fa-comment-dots"></i><span>Chats</span></div>
+                <div class="nav-item" onclick="switchTab('status', this)"><i class="fa-solid fa-circle-notch"></i><span>Status</span></div>
+                <div class="nav-item" onclick="switchTab('clock', this)"><i class="fa-solid fa-clock"></i><span>Clock</span></div>
+                <div class="nav-item" onclick="switchTab('groups', this)"><i class="fa-solid fa-users"></i><span>Groups</span></div>
+                <div class="nav-item" onclick="switchTab('profile', this)"><i class="fa-solid fa-user"></i><span>Profile</span></div>
             </div>
         </div>
 
@@ -161,12 +171,40 @@
 
         let currentUser = null, activeFriend = null, chatSub = null, selectedMsgId = null;
 
-        // PWA Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7IH0pOw==');
-            });
-        }
+        window.switchTab = (tab, el) => {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+            const userList = document.getElementById('user-list');
+            const clockPage = document.getElementById('clock-page');
+            const title = document.getElementById('page-title');
+            if(tab === 'clock') {
+                userList.classList.add('hidden');
+                clockPage.classList.remove('hidden');
+                title.innerText = "Analog Clock";
+            } else if(tab === 'chats') {
+                userList.classList.remove('hidden');
+                clockPage.classList.add('hidden');
+                title.innerText = "Passgram";
+                loadUsers();
+            } else {
+                clockPage.classList.add('hidden');
+                userList.classList.remove('hidden');
+                userList.innerHTML = `<div style="padding:50px; text-align:center; color:#888;">${tab.toUpperCase()} Section Coming Soon...</div>`;
+                title.innerText = tab.charAt(0).toUpperCase() + tab.slice(1);
+            }
+        };
+
+        setInterval(() => {
+            const d = new Date();
+            const h = d.getHours();
+            const m = d.getMinutes();
+            const s = d.getSeconds();
+            if(document.getElementById('hour')) {
+                document.getElementById('hour').style.transform = `translateX(-50%) rotate(${30 * h + m / 2}deg)`;
+                document.getElementById('minutes').style.transform = `translateX(-50%) rotate(${6 * m}deg)`;
+                document.getElementById('seconds').style.transform = `translateX(-50%) rotate(${6 * s}deg)`;
+            }
+        }, 1000);
 
         window.togglePwd = () => {
             const p = document.getElementById('password');
@@ -177,32 +215,59 @@
 
         window.authAction = () => {
             const e = document.getElementById('email').value, p = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
+            const msg = document.getElementById('login-msg');
             if(!e || !p) return alert("Fill all fields");
-            signInWithEmailAndPassword(auth, e, p).catch(() => createUserWithEmailAndPassword(auth, e, p));
-        };
+            btn.disabled = true;
+            btn.innerText = "Connecting...";
+            msg.innerText = "Checking credentials...";
+            msg.style.color = "inherit";
 
-        window.logout = () => { closeSettings(); signOut(auth); };
-        window.openSettings = () => document.getElementById('settings-modal').classList.remove('hidden');
-        window.closeSettings = () => document.getElementById('settings-modal').classList.add('hidden');
-        window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); };
-        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+            signInWithEmailAndPassword(auth, e, p)
+            .catch((error) => {
+                if(error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    createUserWithEmailAndPassword(auth, e, p).catch(err => {
+                        msg.innerText = "Error: " + err.message;
+                        msg.style.color = "#ff4d4f";
+                        btn.disabled = false;
+                        btn.innerText = "Join Now";
+                    });
+                } else {
+                    msg.innerText = "Incorrect Password! Try again.";
+                    msg.style.color = "#ff4d4f";
+                    btn.disabled = false;
+                    btn.innerText = "Join Now";
+                }
+            });
+        };
 
         onAuthStateChanged(auth, async (u) => {
             if(u) {
-                currentUser = u; await setDoc(doc(db, "users", u.email), { email: u.email }, { merge: true });
-                document.getElementById('login-screen').classList.add('hidden'); document.getElementById('app-interface').classList.remove('hidden');
+                currentUser = u;
+                await setDoc(doc(db, "users", u.email), { email: u.email }, { merge: true });
+                document.getElementById('login-screen').classList.add('hidden'); 
+                document.getElementById('app-interface').classList.remove('hidden');
                 loadUsers();
             } else {
-                document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('app-interface').classList.add('hidden');
+                currentUser = null;
+                // Reset Login UI on logout
+                const btn = document.getElementById('login-btn');
+                const msg = document.getElementById('login-msg');
+                if(btn) { btn.disabled = false; btn.innerText = "Join Now"; }
+                if(msg) { msg.innerText = "Connect with friends instantly"; msg.style.color = "inherit"; }
+                document.getElementById('login-screen').classList.remove('hidden'); 
+                document.getElementById('app-interface').classList.add('hidden');
             }
         });
 
         function loadUsers() {
             onSnapshot(collection(db, "users"), (s) => {
-                const l = document.getElementById('user-list'); l.innerHTML = '';
+                const l = document.getElementById('user-list');
+                if(!l || l.classList.contains('hidden')) return;
+                l.innerHTML = '';
                 s.forEach(d => {
                     const u = d.data();
-                    if(u.email !== currentUser.email) {
+                    if(u.email !== currentUser?.email) {
                         const e = document.createElement('div'); e.className = 'user-card';
                         e.innerHTML = `<div class="avatar">${u.email[0].toUpperCase()}</div><div class="user-info"><h4>${u.email.split('@')[0]}</h4><p>Online</p></div>`;
                         e.onclick = () => openChat(u.email); l.appendChild(e);
@@ -211,7 +276,7 @@
             });
         }
 
-        function openChat(email) {
+        window.openChat = (email) => {
             activeFriend = email; document.getElementById('chat-name').innerText = email.split('@')[0];
             document.getElementById('chat-avatar').innerText = email[0].toUpperCase();
             document.getElementById('chat-page').classList.remove('page-hidden');
@@ -231,7 +296,7 @@
                 });
                 c.scrollTop = c.scrollHeight;
             });
-        }
+        };
 
         window.closeChat = () => { document.getElementById('chat-page').classList.add('page-hidden'); if(chatSub) chatSub(); };
         window.sendMsg = async (e) => {
@@ -240,6 +305,10 @@
             await addDoc(collection(db, "chats", rid, "messages"), { text: v, sender: currentUser.email, time: serverTimestamp(), status: 'sent', deletedFor: [] });
         };
 
+        window.logout = () => { closeSettings(); signOut(auth); };
+        window.openSettings = () => document.getElementById('settings-modal').classList.remove('hidden');
+        window.closeSettings = () => document.getElementById('settings-modal').classList.add('hidden');
+        window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); };
         window.toggleHeaderMenu = (e) => { const m = document.getElementById('chat-header-menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; e.stopPropagation(); };
         window.clearChatHistory = async () => {
             if(!confirm("Clear all messages for everyone?")) return;
@@ -262,7 +331,10 @@
             document.getElementById('msg-menu').style.display = 'none';
         };
 
-        document.onclick = () => { document.getElementById('msg-menu').style.display = 'none'; document.getElementById('chat-header-menu').style.display = 'none'; };
+        document.onclick = () => { 
+            if(document.getElementById('msg-menu')) document.getElementById('msg-menu').style.display = 'none'; 
+            if(document.getElementById('chat-header-menu')) document.getElementById('chat-header-menu').style.display = 'none'; 
+        };
     </script>
 </body>
 </html>
